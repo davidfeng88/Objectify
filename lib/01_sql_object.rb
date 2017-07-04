@@ -37,7 +37,8 @@ class SQLObject
     # Finalize is called at the end of the subclass definition to
     # add the getters/setters.
     self.columns.each do |col|
-      define_method(col.to_s) { self.attributes[col] }
+      # define_method takes a symbol as the argument
+      define_method(col) { self.attributes[col] }
       # "#{:name}" == "name" String interpolation convert symbol to string
       define_method("#{col}=") { |val| self.attributes[col] = val }
     end
@@ -52,7 +53,8 @@ class SQLObject
     SQL
     # convert the array of Hash objects to an array of specific object
     # e.g. Cat object.
-    self.parse_all(results)
+    # cannot call private method with explicit receiver
+    parse_all(results)
   end
 
   def self.find(id)
@@ -64,7 +66,7 @@ class SQLObject
       WHERE
         #{self.table_name}.id = ?
     SQL
-    self.parse_all(results).first
+    parse_all(results).first
   end
 
   # instance methods
@@ -87,7 +89,7 @@ class SQLObject
   end
 
   def attribute_values
-    # @attributes.values
+    # use ::columns to ensure the order of attributes
     self.class.columns.map {|attr| self.send(attr) }
   end
 
@@ -108,6 +110,8 @@ class SQLObject
   end
 
   def update
+    # drop the first column to avoid updating id
+    # (the database should also take care of this)
     set_line = self.class.columns[1..-1]
       .map{ |attr_name| "#{attr_name} = ? "}.join(", ")
 
