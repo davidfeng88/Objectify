@@ -1,10 +1,14 @@
 require_relative 'db_connection'
 require_relative 'searchable'
+require_relative 'associatable'
+
 # for String#tableize
 require 'active_support/inflector'
 
 class SQLObject
   extend Searchable
+  extend Associatable
+
   # class methods
 
   def self.table_name

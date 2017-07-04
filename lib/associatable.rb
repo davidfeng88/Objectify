@@ -1,4 +1,4 @@
-require_relative 'sql_object'
+require_relative 'searchable'
 require 'active_support/inflector'
 
 class AssocOptions
@@ -46,39 +46,33 @@ end
 
 module Associatable
   def belongs_to(name, options = {})
-    assoc_options[name] = BelongsToOptions.new(name, options)
-    # name = ":human"
-    define_method(name) {
-      foreign_key_value = self.send(self.class.assoc_options[name].foreign_key)
-      # options.model_class: Human
-      self.class.assoc_options[name].model_class.where(self.class.assoc_options[name].primary_key => foreign_key_value).first
+    self.assoc_options[name] = BelongsToOptions.new(name, options)
 
-    }
-
+    define_method(name) do
+      options = self.class.assoc_options[name]
+      foreign_key_value = self.send(options.foreign_key)
+      options
+        .model_class
+        .where(options.primary_key => foreign_key_value)
+        .first
+    end
   end
 
   def has_many(name, options = {})
-    options = HasManyOptions.new(name, self.to_s, options)
-    # this should also be updated with assoc_options!!
-    # two steps:
-    # 1. change options = to assoc_options[name] =
-    # 2. change options. to self.class.assoc_options[name]
-    # name = ":cats"
-    define_method(name) {
-      primary_key_value = self.send(options.primary_key)
-      # options.model_class: Cat
-      options.model_class.where(options.foreign_key => primary_key_value)
+    self.assoc_options[name] =
+      HasManyOptions.new(name, self.name, options)
 
-    }
+    define_method(name) do
+      options = self.class.assoc_options[name]
+      primary_key_value = self.send(options.primary_key)
+      options
+        .model_class
+        .where(options.foreign_key => primary_key_value)
+    end
   end
 
   def assoc_options
-    # Wait to implement this in Phase IVa. Modify `belongs_to`, too.
     @options ||= {}
   end
-end
 
-class SQLObject
-  # Mixin Associatable here...
-  extend Associatable
 end
