@@ -1,6 +1,8 @@
 require_relative 'searchable'
 require 'active_support/inflector'
 
+require 'byebug'
+
 class AssocOptions
   attr_accessor :foreign_key, :class_name, :primary_key
 
@@ -80,58 +82,38 @@ module Associatable
       through_options = self.class.assoc_options[through_name]
       source_options = through_options.model_class.assoc_options[source_name]
 
-      top_class = source_options.class_name
-      top_id = source_options.foreign_key
-      mid_class = through_options.class_name
-      mid_id = through_options.foreign_key
-      results = DBConnection.execute(<<-SQL, self.id)
+      # cat belongs to an owner
+      # through options: className: Human, primary_key: id, foreign_key: owner_id
+      #
+      # human belongs to a house
+      # source options: className: House, primary_key: id, foreign_key: house_id
+      #
+      # we would like to build: cat has one home through human (source: house)
+
+      source_table = source_options.table_name # houses
+      source_fk = source_options.foreign_key # :house_id (in human table)
+      source_pk = source_options.primary_key # :id (house's id)
+
+      through_table = through_options.table_name # humans
+      through_fk = through_options.foreign_key # :owner_id (in cat table)
+      through_pk = through_options.primary_key # :id (human's id)
+
+      key_val = self.send(through_fk) # :owner_id
+      results = DBConnection.execute(<<-SQL, key_val)
         SELECT
-          #{top_class.constantize.table_name}.*
+          #{source_table}.*
         FROM
-          #{top_class.constantize.table_name}
+          #{source_table}
         JOIN
-          #{mid_class.constantize.table_name}
+          #{through_table}
         ON
-          #{top_class.constantize.table_name}.id = #{mid_class.constantize.table_name}.#{top_id}
-        JOIN
-          #{self.class.table_name}
-        ON
-          #{mid_class.constantize.table_name}.id = #{self.class.table_name}.#{mid_id}
+          #{source_table}.#{source_pk} = #{through_table}.#{source_fk}
         WHERE
-          #{self.class.table_name}.id = ?
+          #{through_table}.#{through_pk} = ?
       SQL
 
-      top_class.constantize.new(results[0])
-
-
-      # this works, but probably not ideal.. two queries
-      # through_object = self.send(through_name)
-      # result = through_object.send(source_name)
-
-      # solution: do not have to join 3 tables. 2 tables are enough
-      #      through_table = through_options.table_name
-      #      through_pk = through_options.primary_key
-      #      through_fk = through_options.foreign_key
-      #
-      #      source_table = source_options.table_name
-      #      source_pk = source_options.primary_key
-      #      source_fk = source_options.foreign_key
-      #
-      #      key_val = self.send(through_fk)
-      #      results = DBConnection.execute(<<-SQL, key_val)
-      #        SELECT
-      #          #{source_table}.*
-      #        FROM
-      #          #{through_table}
-      #        JOIN
-      #          #{source_table}
-      #        ON
-      #          #{through_table}.#{source_fk} = #{source_table}.#{source_pk}
-      #        WHERE
-      #          #{through_table}.#{through_pk} = ?
-      #      SQL
-      #
-      #      source_options.model_class.parse_all(results).first
+      source_options.model_class.parse_all(results).first
     end
   end
+
 end
