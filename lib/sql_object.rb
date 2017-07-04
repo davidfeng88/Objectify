@@ -1,5 +1,6 @@
 require_relative 'db_connection'
 require_relative 'searchable'
+# for String#tableize
 require 'active_support/inflector'
 
 class SQLObject
