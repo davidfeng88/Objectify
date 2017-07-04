@@ -1,4 +1,4 @@
-require '02_searchable'
+require 'sql_object'
 
 describe 'Searchable' do
   before(:each) { DBConnection.reset }

@@ -1,8 +1,9 @@
 require_relative 'db_connection'
+require_relative 'searchable'
 require 'active_support/inflector'
 
 class SQLObject
-
+  extend Searchable
   # class methods
 
   def self.table_name
