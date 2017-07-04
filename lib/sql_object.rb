@@ -63,6 +63,10 @@ class SQLObject
     parse_all(results)
   end
 
+  def self.parse_all(results)
+    results.map{ |result| self.new(result) }
+  end
+  
   def self.find(id)
     results = DBConnection.execute(<<-SQL, id)
       SELECT
@@ -135,12 +139,6 @@ class SQLObject
 
   def save
     id.nil? ? insert : update
-  end
-
-  private
-
-  def self.parse_all(results)
-    results.map{ |result| self.new(result) }
   end
 
 end
