@@ -1,5 +1,5 @@
 # Objectify – Object-relational mapping in Ruby
-Objectify is inspired by Active Record, and it connects relational database tables to Ruby classes. The library provides a `SQLObject` base class . When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the table is established. Moreover, models can connect with other models by defining **associations**.
+Objectify is inspired by Active Record, and it connects relational database tables to Ruby classes. The library provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the table is established. Moreover, models can connect with other models by defining **associations**.
 
 Naming convention:
 Database table name: snake case, plural, e.g.  `players`
