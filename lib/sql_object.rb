@@ -39,17 +39,6 @@ class SQLObject
     @columns
   end
 
-  def self.finalize!
-    # Finalize is called at the end of the subclass definition to
-    # add the getters/setters.
-    self.columns.each do |col|
-      # define_method takes a symbol as the argument
-      define_method(col) { self.attributes[col] }
-      # "#{:name}" == "name" String interpolation convert symbol to string
-      define_method("#{col}=") { |val| self.attributes[col] = val }
-    end
-  end
-
   def self.all
     results = DBConnection.execute(<<-SQL)
       SELECT
@@ -63,8 +52,12 @@ class SQLObject
     parse_all(results)
   end
 
-  def self.parse_all(results)
-    results.map{ |result| self.new(result) }
+  def self.first
+    self.all.first
+  end
+
+  def self.last
+    self.all.last
   end
   
   def self.find(id)
@@ -92,15 +85,6 @@ class SQLObject
         raise "unknown attribute '#{attr_name}'"
       end
     end
-  end
-
-  def attributes
-    @attributes ||= {}
-  end
-
-  def attribute_values
-    # use ::columns to ensure the order of attributes
-    self.class.columns.map {|attr| self.send(attr) }
   end
 
   def insert
@@ -139,6 +123,32 @@ class SQLObject
 
   def save
     id.nil? ? insert : update
+  end
+
+  private
+
+  def self.finalize!
+    # Finalize is called at the end of the subclass definition to
+    # add the getters/setters.
+    self.columns.each do |col|
+      # define_method takes a symbol as the argument
+      define_method(col) { attributes[col] }
+      # "#{:name}" == "name" String interpolation convert symbol to string
+      define_method("#{col}=") { |val| attributes[col] = val }
+    end
+  end
+
+  def self.parse_all(results)
+    results.map{ |result| self.new(result) }
+  end
+
+  def attributes
+    @attributes ||= {}
+  end
+
+  def attribute_values
+    # use ::columns to ensure the order of attributes
+    self.class.columns.map {|attr| self.send(attr) }
   end
 
 end
