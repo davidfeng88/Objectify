@@ -77,7 +77,7 @@ end
 
 * `has_many` and `belongs_to` takes a required name and a optional hash for `class_name`, `primary_key`, and `foreign_key`.
 
-*  `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. For example,
+*  `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. In the demo database:
   1. `City` has a `belongs_to` association (`:country`) with `Country`
   2. `Country` has a `belongs_to` association (`:continent`) with `Continent`
-  then we could define a `has_one_through` association (`:continent`)for `City` using the following options: `name`: `:continent`, `through_name`: `:country`, `source_name`:  `:continent`.
+  3. I defined a `has_one_through` association (`:continent`)for `City` using the following options: `name`: `:continent`, `through_name`: `:country`, `source_name`:  `:continent`.
