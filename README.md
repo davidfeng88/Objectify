@@ -2,13 +2,33 @@
 
 Inspired by Active Record, Objectify is a Ruby object-relational mapping (ORM) library. It uses SQLite3 as its database. Objectify provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the database is established. Moreover, models can connect with other models by defining **associations**.
 
-Naming convention:
-Database table name: snake case, plural, e.g.  `cities`
-Model name: CamelCase, singular, e.g. `City`
+## Demo
+For demo purposes, a database `geo.db` is provided. To experience Objectify, run the following commands in your terminal:
+1. `git clone https://github.com/davidfeng88/Objectify.git`
+2. `cd Objectify/`
+3. `irb`
+4. `load 'geo.rb'`
+5. Try some of these commands!
+```ruby
+City.all
+beijing = City.first
+canada = Country.last
+Country.find(3)
 
-## Setup
-* For demo purposes, a database `geo.db` is provided, which contains the following tables:
+japan = Country.where(name: "Japan").first
+kyoto = City.new(name: "kyoto", country_id: japan.id)
+kyoto.save
+City.last
+kyoto.name = "Kyoto"
+kyoto.save
+City.last
 
+beijing.country
+canada.continent
+beijing.continent
+```
+
+### Tables in `geo.db`
 `continents`
 
 id | name
@@ -35,7 +55,9 @@ id | name | country_id
 4 | "New York" | 3
 5 | "Chicago" | 3
 6 | "Los Angeles" | 3
-7 | "Toronto" | 3
+7 | "Toronto" | 4
+
+
 
 * In `/lib/db_connection.rb`, specify the `.sql` and `.db` file (Objectify uses SQLite3).
 
@@ -59,7 +81,7 @@ end
 
 * `::find(id)` returns the instance with the id provided. Returns `nil` if not found.
 
-* `#new(params)` creates a new instance with optional params hash.
+* `::new(params)` creates a new instance with optional params hash.
 
 * `#save` call `#insert` or `#update` based on whether the id is `nil` or not.
 
