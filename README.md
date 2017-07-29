@@ -38,7 +38,7 @@ beijing.continent
 
 * `::find(id)` returns the instance with the id provided. It returns `nil` if not found.
 
-* `::new(params)` creates a new instance with optional hash of parameters.
+* `::new(params)` creates a new instance with an optional hash of parameters.
 
 * `#save` saves the changes of the instance in the database. It calls `#insert` or `#update` based on whether the id is `nil` or not.
 
@@ -69,7 +69,7 @@ end
 
 * Supported associations currently include `has_many`, `belongs_to`, `has_one_through`.
 
-* `has_many` and `belongs_to` takes a required name and a optional hash for `class_name`, `primary_key`, and `foreign_key`.
+* `has_many` and `belongs_to` takes a required name and an optional hash for `class_name`, `primary_key`, and `foreign_key`.
 
 * `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. For example, in the demo database:
   1. `City` has a `belongs_to` association (`:country`) with `Country`
