@@ -80,4 +80,7 @@ end
 * `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. For example, in the demo database:
   1. `City` has a `belongs_to` association (`:country`) with `Country`
   2. `Country` has a `belongs_to` association (`:continent`) with `Continent`
-  3. I defined a `has_one_through` association (`:continent`)for `City` using the following options: `name`: `:continent`, `through_name`: `:country`, `source_name`:  `:continent`.
+  3. I defined a `has_one_through` association (`:continent`) for `City` using the following options:
+    * `name`: `:continent`
+    * `through_name`: `:country`
+    * `source_name`:  `:continent`
