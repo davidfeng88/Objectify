@@ -28,12 +28,11 @@ canada.continent
 beijing.continent
 ```
 
-* To see the content of `geo.db`, check out [`geo.sql`](./geo.sql) file.
+* To see the content of the demo database, check out [`geo.sql`](./geo.sql) file.
 
-* To use Objectify with your own database, create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to `geo.sql` and `geo.rb` if needed.
+* To use Objectify with your own database, create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to [`geo.sql`](./geo.sql) and [`geo.rb`](./geo.rb) files if needed.
   1. Write a SQL source file (`.sql`).
-  2. Run the following command to generates the tables:
-    `cat FILENAME.sql | sqlite3 FILENAME.db`
+  2. Run `cat FILENAME.sql | sqlite3 FILENAME.db` to generates the database file (`.db`).    
   3. Edit the `SQL_FILE` and `DB_FILE` constants in `/lib/db_connection.rb` so that they point to the `.sql` and `.db` files in step 1 and 2.
   4. Write a Ruby file (`.rb`) to define the models and set up the associations.
   5. In `irb` or `pry`, load the `.rb` file and you are good to go!
@@ -43,11 +42,11 @@ beijing.continent
 
 * `::first` and `::last` return first and last instance of the class respectively.
 
-* `::find(id)` returns the instance with the id provided. Returns `nil` if not found.
+* `::find(id)` returns the instance with the id provided. It returns `nil` if not found.
 
-* `::new(params)` creates a new instance with optional params hash.
+* `::new(params)` creates a new instance with optional hash of parameters.
 
-* `#save` call `#insert` or `#update` based on whether the id is `nil` or not.
+* `#save` saves the changes of the instance in the database. It calls `#insert` or `#update` based on whether the id is `nil` or not.
 
 ## Other methods
 * `::columns` returns an array of column names (symbols).
@@ -55,14 +54,13 @@ beijing.continent
 * `::table_name` and `::table_name=`: table name getter and setter methods.
 
 ## Search
-* `::where(params)` takes in a params hash. Returns an empty array if nothing is found. For example:
+* `::where(params)` takes in a hash of parameters. It returns an empty array if nothing is found. For example:
 ```ruby
-Country.where(name: "Japan")
-# => an array of Country instances where the name is "Japan"
+Country.where(name: "Japan") # => an array of Country instances where the name is "Japan"
 ```
 
 ## Association
-* Associations are defined in the model definition before `#finalize!`. For example:
+* Associations are defined in the `.rb` file before `::finalize!`. For example:
 ```ruby
 class Continent < SQLObject
   has_many :countries
@@ -77,13 +75,11 @@ end
 
 * Supported associations currently include `has_many`, `belongs_to`, `has_one_through`.
 
-* `has_many` and `belongs_to` takes a required name and a optional hash for `class_name`, `primary_key`, and `foreign_key`. If the optional hash is not provided, the information will be inferred from known information.
+* `has_many` and `belongs_to` takes a required name and a optional hash for `class_name`, `primary_key`, and `foreign_key`.
 
 *  `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. For example,
-
-  If
   1. `City` has a `belongs_to` association (`:country`) with `Country`
-  and
   2. `Country` has a `belongs_to` association (`:continent`) with `Continent`
+  
   then
   * we could define a `has_one_through` association (`:continent`)for `City` using the following options: `name``:continent`, `through_name` `:country`, `source_name` `:continent`.
