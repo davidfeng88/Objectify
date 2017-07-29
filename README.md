@@ -19,6 +19,7 @@ japan = Country.where(name: "Japan").first
 kyoto = City.new(name: "kyoto", country_id: japan.id)
 kyoto.save
 City.last
+
 kyoto.name = "Kyoto"
 kyoto.save
 City.last
@@ -28,14 +29,7 @@ canada.continent
 beijing.continent
 ```
 
-* To see the content of the demo database, check out [`geo.sql`](./geo.sql) file.
-
-* To use Objectify with your own database, create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to [`geo.sql`](./geo.sql) and [`geo.rb`](./geo.rb) files if needed.
-  1. Write a SQL source file (`.sql`).
-  2. Run `cat FILENAME.sql | sqlite3 FILENAME.db` to generates the database file (`.db`).    
-  3. Edit the `SQL_FILE` and `DB_FILE` constants in `/lib/db_connection.rb` so that they point to the `.sql` and `.db` files in step 1 and 2.
-  4. Write a Ruby file (`.rb`) to define the models and set up the associations.
-  5. In `irb` or `pry`, load the `.rb` file and you are good to go!
+**Note**: Check out [`geo.sql`](./geo.sql) file for the content of the demo database.
 
 ## Common Methods
 * `::all` returns an array of all instances of the class.
@@ -84,3 +78,11 @@ end
     * `name`: `:continent`
     * `through_name`: `:country`
     * `source_name`:  `:continent`
+
+## Use Objectify with your own database
+You need to create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to [`geo.sql`](./geo.sql) and [`geo.rb`](./geo.rb) files if needed.
+1. Write a SQL source file (`.sql`).
+2. Run `cat FILENAME.sql | sqlite3 FILENAME.db` to generates the database file (`.db`).    
+3. Edit the `SQL_FILE` and `DB_FILE` constants in `/lib/db_connection.rb` so that they point to the `.sql` and `.db` files in step 1 and 2.
+4. Write a Ruby file (`.rb`) to define the models and set up the associations.
+5. In `irb` or `pry`, load the `.rb` file and you are good to go!
