@@ -1,11 +1,37 @@
-# Objectify – Object-relational mapping in Ruby
-Objectify is inspired by Active Record, and it connects relational database tables to Ruby classes. The library provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the table is established. Moreover, models can connect with other models by defining **associations**.
+# Objectify
+
+Inspired by Active Record, Objectify is a Ruby object-relational mapping (ORM) library. It uses SQLite3 as its database. Objectify provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the database is established. Moreover, models can connect with other models by defining **associations**.
 
 Naming convention:
-Database table name: snake case, plural, e.g.  `players`
-Model name: CamelCase, singular, e.g. `Player`
+Database table name: snake case, plural, e.g.  `cities`
+Model name: CamelCase, singular, e.g. `City`
 
 ## Setup
+* For demo purposes, a database `geo.db` is provided, which contains the following tables:
+
+`continents`
+id | name
+-- | ----
+1 | "Asia"
+2 | "North America"
+`countries`
+id | name | continent_id
+-- | ---- | ------------
+1 | "China" | 1
+2 | "Japan" | 1
+3 | "United States" | 2
+4 | "Canada" | 2
+`cities`
+id | name | country_id
+-- | ---- | ------------
+1 | "Beijing" | 1
+2 | "Shanghai" | 1
+3 | "Tokyo" | 2
+4 | "New York" | 3
+5 | "Chicago" | 3
+6 | "Los Angeles" | 3
+7 | "Toronto" | 3
+
 * In `/lib/db_connection.rb`, specify the `.sql` and `.db` file (Objectify uses SQLite3).
 
 * Run the following script:
