@@ -1,6 +1,6 @@
 # Objectify
 
-Inspired by Active Record, Objectify is a Ruby object-relational mapping (ORM) library. It uses SQLite3 as its database. Objectify provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the database is established. Moreover, models can connect with other models by defining **associations**.
+Inspired by Active Record, Objectify is a Ruby object-relational mapping (ORM) library, which uses SQLite3 as its database. Objectify provides an `SQLObject` base class. When users define a new class (model) that is a subclass of `SQLObject`, a mapping between the model and an existing table in the database is established. Moreover, models can connect with other models by defining **associations**.
 
 ## Demo
 For demo purposes, a database `geo.db` is provided. To experience Objectify, run the following commands in your terminal:
@@ -8,7 +8,7 @@ For demo purposes, a database `geo.db` is provided. To experience Objectify, run
 2. `cd Objectify/`
 3. `irb`
 4. `load 'geo.rb'`
-5. Try some of these commands!
+5. Try the following commands!
 ```ruby
 City.all
 beijing = City.first
@@ -28,51 +28,15 @@ canada.continent
 beijing.continent
 ```
 
-### Tables in `geo.db`
-`continents`
+* To see the content of `geo.db`, check out [`geo.sql`](./geo.sql) file.
 
-id | name
--- | ----
-1 | "Asia"
-2 | "North America"
-
-`countries`
-
-id | name | continent_id
--- | ---- | ------------
-1 | "China" | 1
-2 | "Japan" | 1
-3 | "United States" | 2
-4 | "Canada" | 2
-
-`cities`
-
-id | name | country_id
--- | ---- | ------------
-1 | "Beijing" | 1
-2 | "Shanghai" | 1
-3 | "Tokyo" | 2
-4 | "New York" | 3
-5 | "Chicago" | 3
-6 | "Los Angeles" | 3
-7 | "Toronto" | 4
-
-
-
-* In `/lib/db_connection.rb`, specify the `.sql` and `.db` file (Objectify uses SQLite3).
-
-* Run the following script:
-```
-require_relative 'lib/sql_object'
-
-DBConnection.reset
-
-class ModelName < SQLObject
-  self.finalize!
-end
-```
-
-* A simple database has been provided for demo purposes. To use it, run `load ‘test.rb’` in Pry.
+* To use Objectify with your own database, create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to `geo.sql` and `geo.rb` if needed.
+  1. Write a SQL source file (`.sql`).
+  2. Run the following command to generates the tables:
+    `cat FILENAME.sql | sqlite3 FILENAME.db`
+  3. Edit the `SQL_FILE` and `DB_FILE` constants in `/lib/db_connection.rb` so that they point to the `.sql` and `.db` files in step 1 and 2.
+  4. Write a Ruby file (`.rb`) to define the models and set up the associations.
+  5. In `irb` or `pry`, load the `.rb` file and you are good to go!
 
 ## Common Methods
 * `::all` returns an array of all instances of the class.
@@ -92,35 +56,34 @@ end
 
 ## Search
 * `::where(params)` takes in a params hash. Returns an empty array if nothing is found. For example:
-```
-Team.where(name: "Bulls")
-# => an array of Team instances where the name is "Bulls"
+```ruby
+Country.where(name: "Japan")
+# => an array of Country instances where the name is "Japan"
 ```
 
 ## Association
 * Associations are defined in the model definition before `#finalize!`. For example:
-```
-class Conference < SQLObject
-  has_many :teams
+```ruby
+class Continent < SQLObject
+  has_many :countries
   finalize!
 end
 
-class Team < SQLObject
-  belongs_to :conference
-  has_many :players
-  finalize!
-end
-
-class Player < SQLObject
-  belongs_to :team
-  has_one_through :conference, :team, :conference
+class Country < SQLObject
+  belongs_to :continent
   finalize!
 end
 ```
 
-* Currently supported associations include `has_many`, `belongs_to`, `has_one_through`.
+* Supported associations currently include `has_many`, `belongs_to`, `has_one_through`.
 
-* `has_many` and `belongs_to` takes a required name and a optional hash for class_name, primary_key, and foreign_key. If the optional hash is not provided, the information will be inferred from known information.
+* `has_many` and `belongs_to` takes a required name and a optional hash for `class_name`, `primary_key`, and `foreign_key`. If the optional hash is not provided, the information will be inferred from known information.
 
-*  `has_one_through` requires three arguments: name, through_name, source_name.  `has_one_through` connects two `belongs_to` associations.
-For example, if `Player` belongs_to `:team` and `Team` belongs_to `:conference`, then we could define `Player` has_one_through (`:conference`, through `:team`, source `:conference`)
+*  `has_one_through` requires three arguments: `name`, `through_name`, `source_name`.  `has_one_through` connects two `belongs_to` associations. For example,
+
+  If
+  1. `City` has a `belongs_to` association (`:country`) with `Country`
+  and
+  2. `Country` has a `belongs_to` association (`:continent`) with `Continent`
+  then
+  * we could define a `has_one_through` association (`:continent`)for `City` using the following options: `name``:continent`, `through_name` `:country`, `source_name` `:continent`.
