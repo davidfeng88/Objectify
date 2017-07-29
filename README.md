@@ -10,18 +10,23 @@ Model name: CamelCase, singular, e.g. `City`
 * For demo purposes, a database `geo.db` is provided, which contains the following tables:
 
 `continents`
+
 id | name
 -- | ----
 1 | "Asia"
 2 | "North America"
+
 `countries`
+
 id | name | continent_id
 -- | ---- | ------------
 1 | "China" | 1
 2 | "Japan" | 1
 3 | "United States" | 2
 4 | "Canada" | 2
+
 `cities`
+
 id | name | country_id
 -- | ---- | ------------
 1 | "Beijing" | 1
