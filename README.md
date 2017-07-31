@@ -89,11 +89,7 @@ You need to create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to [
 
 ## Future Directions
 
-
-## Extension Ideas
-
-1. Write `where` so that it is lazy and stackable. Implement a
-  `Relation` class.
+1. Write `where` so that it is lazy and stackable. Implement a `Relation` class.
 2. Validation methods/validator class.
 3. `has_many :through`
     * This should handle both `belongs_to => has_many` and `has_many
