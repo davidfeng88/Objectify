@@ -86,3 +86,17 @@ You need to create three files (`.sql`, `.db`, and `.rb`) as follows. Refer to [
 3. Edit the `SQL_FILE` and `DB_FILE` constants in `/lib/db_connection.rb` so that they point to the `.sql` and `.db` files in step 1 and 2.
 4. Write a Ruby file (`.rb`) to define the models and set up the associations.
 5. In `irb` or `pry`, load the `.rb` file and you are good to go!
+
+## Future Directions
+
+
+## Extension Ideas
+
+1. Write `where` so that it is lazy and stackable. Implement a
+  `Relation` class.
+2. Validation methods/validator class.
+3. `has_many :through`
+    * This should handle both `belongs_to => has_many` and `has_many
+      => belongs_to`.
+4. Write an `includes` method that does pre-fetching.
+5. `joins`
